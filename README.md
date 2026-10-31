@@ -8,7 +8,7 @@ you should be able to take this video and implement more features to `ls`, and o
 
 ## build / run
 
-```sh
+```sh 
 gcc -Wall -Wextra -o lsbtw ls.c
 
 ./lsbtw            # list the current directory

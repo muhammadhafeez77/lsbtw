@@ -2,12 +2,20 @@
 #include <grp.h>
 #include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
 
 int count[4] = {0, 0, 0, 0};
+
+static int file_shifting(const void *p1, const void *p2)
+{
+  const char *strA = *(const char **)p1;
+  const char *strB = *(const char **)p2;
+  return strcmp(strA, strB);
+}
 
 void padding(const char *dir, const char *filename)
 {
@@ -132,7 +140,6 @@ void print_long(const char *dir, const char *name)
 
 int show_all = 0;
 int long_format = 0;
-
 int main(int argc, char *argv[])
 {
   int opt;
@@ -162,18 +169,26 @@ int main(int argc, char *argv[])
     perror("opendir");
     return 1;
   }
-
+  static int arr_size = 0;
   struct dirent *entry, *empress;
+
+  // file_sort();
+  char *static_array[4096];
   while ((entry = readdir(dir)) != NULL)
   {
+
     while ((empress = readdir(innerdir)) != NULL)
     {
       if (!show_all && empress->d_name[0] == '.')
       {
         continue;
       }
+      static_array[arr_size] = empress->d_name;
       padding(path, empress->d_name);
+      arr_size++;
     }
+
+    qsort(&static_array, arr_size, sizeof(struct entry *), file_shifting);
 
     if (!show_all && entry->d_name[0] == '.')
     {
@@ -189,32 +204,14 @@ int main(int argc, char *argv[])
       printf("%s\n", entry->d_name);
     }
   }
-  empress->d_name[2];
-  empress->d_name empress->d_name[3];
+
+  printf("\n\n======\n");
+  for (int i = 0; i < arr_size; i++)
+  {
+    printf("%s\n", static_array[i]);
+  }
+
   closedir(innerdir);
   closedir(dir);
   return 0;
-
-  char *names[4] = {"Ali", "Ahmad", "Basit", "Abrar"};
-
-  for (int i = 0; i < 4; i++)
-  {
-    for (int j = i + 1; j < 4; j++)
-    {
-
-            int smaller_size = strlen(names[i]) < strlen(names[j] ? strlen(names[i]) : strlen(names[j]);
-                    for (int k = 0; k < smaller_size; k++)
-                    {
-        if (names[i][k] > names[j][k])
-        {
-          swap(names[i], names[j]);
-          break;
-        }
-        else
-        {
-          break;
-        }
-                    }
-    }
-  }
 }
